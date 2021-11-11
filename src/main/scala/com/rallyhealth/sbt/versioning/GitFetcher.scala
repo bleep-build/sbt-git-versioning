@@ -1,6 +1,6 @@
 package com.rallyhealth.sbt.versioning
 
-import sbt.util.Logger
+import bleep.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -21,7 +21,7 @@ object GitFetcher {
     *
     * @param remotes Remote sources whose contents should be fetched AFTER fetching the list of tags.
     */
-  def fetchRemotes(remotes: Seq[String], timeout: Duration)(implicit logger: Logger): Seq[FetchResult] = {
+  def fetchRemotes(timeout: Duration)(implicit logger: Logger): Seq[FetchResult] = {
     val outputLogger = new BufferingProcessLogger
     val processResult = Process("git remote") ! outputLogger
 
@@ -33,7 +33,7 @@ object GitFetcher {
         val tagsToFetch = remotes.filter(remotes.contains)
         if (tagsToFetch.nonEmpty) {
           logger.info("Fetching tags from: " + tagsToFetch.mkString(", "))
-          tagsToFetch.flatMap(remote => fetchTagsFromRemote(remote, timeout))
+          tagsToFetch.toSeq.flatMap(remote => fetchTagsFromRemote(remote, timeout)(logger))
         } else {
           logger.debug("No tags to fetch")
           Seq.empty[FetchResult]
@@ -51,7 +51,7 @@ object GitFetcher {
     val process = Process(s"git fetch $remote --tags").run(outputLogger)
     val resultFuture = Future {
       if (process.exitValue() == 0) {
-        outputLogger.stderr.filter(_.contains("[new tag]")).flatMap {
+        outputLogger.stderr.toSeq.filter(_.contains("[new tag]")).flatMap {
           case tagResultRegex(tag) =>
             logger.debug(s"Fetched from remote=$remote tag=$tag")
             Some(FetchResult(remote, tag))

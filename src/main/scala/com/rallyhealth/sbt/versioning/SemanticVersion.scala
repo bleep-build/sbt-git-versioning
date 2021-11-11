@@ -35,7 +35,7 @@ sealed trait SemanticVersion extends Ordered[SemanticVersion] {
 
   override lazy val toString: String = {
     val tagStr = identifiers.toString
-    s"$major.$minor.$patch" + (if (tagStr.isEmpty) "" else SemVerIdentifierList.separatorChar + tagStr)
+    s"$major.$minor.$patch" + (if (tagStr.isEmpty) "" else SemVerIdentifierList.separatorChar.toString + tagStr)
   }
 
   /**
@@ -109,7 +109,7 @@ object SemanticVersion {
     def unapply(version: String): Option[Seq[StringSemVerIdentifier]] = {
       version.split(SemVerIdentifierList.separatorChar).filter(_.nonEmpty) match {
         case data if data.isEmpty => Some(Seq.empty)
-        case data => Some(data.map(StringSemVerIdentifier(_)))
+        case data => Some(data.toSeq.map(StringSemVerIdentifier(_)))
       }
     }
   }
@@ -183,7 +183,7 @@ object ReleaseVersion {
   /** Regex that matches a [[ReleaseVersion]]. See README.md */
   val regex: Regex = {
     import SemanticVersion._
-    (versionPrefix + s"(?:-(${StringSemVerIdentifier.dirty})-${StringSemVerIdentifier.snapshot})?").r
+    (versionPrefix.toString() + s"(?:-(${StringSemVerIdentifier.dirty})-${StringSemVerIdentifier.snapshot})?").r
   }
 
   /** The first version, the "In the beginning" version, the version from which all other versions come forth. */
@@ -217,8 +217,6 @@ object ReleaseVersion {
 
     releases.sorted[SemanticVersion].lastOption
   }
-
-  import scala.language.implicitConversions
 
   /**
     * Sugar to allow easy setting of values using strings in the sbt console or builds.
@@ -334,7 +332,7 @@ object SnapshotVersion {
 
     val dirtyIdentifierRegex = s"(?:-(${StringSemVerIdentifier.dirty}))?"
     val commitCountAndHashPattern = "-(" + CommitsSemVerIdentifier.regex + ")-(" + HashSemVerIdentifier.regex + ")"
-    (versionPrefix + commitCountAndHashPattern + dirtyIdentifierRegex + s"-${StringSemVerIdentifier.snapshot}").r
+    (versionPrefix.toString() + commitCountAndHashPattern + dirtyIdentifierRegex + s"-${StringSemVerIdentifier.snapshot}").r
   }
 
   /**

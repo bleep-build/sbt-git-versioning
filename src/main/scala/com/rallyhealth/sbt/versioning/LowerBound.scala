@@ -15,8 +15,6 @@ case class LowerBound(major: Int, minor: Int, patch: Int) {
 
 object LowerBound {
 
-  import scala.language.implicitConversions
-
   private val Pattern = "(\\d+)\\.(\\d+)\\.(\\d+)".r
 
   implicit def stringToLowerBound(s: String): LowerBound = s match {

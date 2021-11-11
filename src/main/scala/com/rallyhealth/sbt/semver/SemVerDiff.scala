@@ -1,7 +1,7 @@
 package com.rallyhealth.sbt.semver
 
 import com.rallyhealth.sbt.semver.SemVerDiff.Delta.DiffType
-import com.rallyhealth.sbt.versioning.{ReleaseVersion, SemanticVersion}
+import com.rallyhealth.sbt.versioning.{ReleaseVersion}
 
 object SemVerDiff {
 

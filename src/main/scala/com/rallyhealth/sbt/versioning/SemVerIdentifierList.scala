@@ -1,7 +1,5 @@
 package com.rallyhealth.sbt.versioning
 
-import scala.language.implicitConversions
-
 /** Convenience/helper class that makes dealing with multiple [[SemVerIdentifier]]s a little easier. */
 case class SemVerIdentifierList(values: Seq[SemVerIdentifier]) extends Ordered[SemVerIdentifierList] {
 

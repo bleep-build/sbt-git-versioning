@@ -33,7 +33,7 @@ case class GitWorkingState(isDirty: Boolean)
 sealed trait GitBranchState {
 
   /** Similar to [[Predef.require()]] yet it tacks on "this" to the end of the message. */
-  protected def require(requirement: Boolean, message: => Any) {
+  protected def require(requirement: Boolean, message: => Any) = {
     if (!requirement)
       throw new IllegalArgumentException(s"requirement failed: $message (from $this)")
   }
@@ -50,10 +50,16 @@ case class GitBranchStateTwoReleases(
   // this checks hash directly because tags might be unequal and that's still bad
   require(headCommit.fullHash != prevCommit.fullHash, s"headCommit=$headCommit cannot be the prevCommit=$prevCommit")
   require(
-    headCommit.tags.exists { case ReleaseVersion(v) => v == headVersion },
+    headCommit.tags.exists {
+      case ReleaseVersion(v) => v == headVersion
+      case other => sys.error(s"Unexpected: $other")
+    },
     s"headCommit=$headCommit should be tagged with headVersion=$headVersion")
   require(
-    prevCommit.tags.exists { case ReleaseVersion(v) => v == prevVersion },
+    prevCommit.tags.exists {
+      case ReleaseVersion(v) => v == prevVersion
+      case other => sys.error(s"Unexpected: $other")
+    },
     s"prevCommit=$prevCommit should be tagged with prevVersion=$prevVersion")
   require(
     headCommit != prevCommit,
@@ -92,7 +98,10 @@ case class GitBranchStateOneReleaseNotHead(
     headCommit.commit.tags.collect { case ReleaseVersion(v) => v }.isEmpty,
     s"headCommit=$headCommit should NOT be tagged as a release version")
   require(
-    prevCommit.tags.exists { case ReleaseVersion(v) => v == prevVersion },
+    prevCommit.tags.exists {
+      case ReleaseVersion(v) => v == prevVersion
+      case other => sys.error(s"Unexpected: $other")
+    },
     s"prevCommit=$prevCommit should be tagged with prevVersion=$prevVersion")
   require(!prevVersion.isDirty, s"prevVersion=$prevVersion cannot be dirty")
 }
@@ -116,7 +125,10 @@ case class GitBranchStateOneReleaseHead(headCommit: GitCommit, headVersion: Rele
 
   require(!headVersion.isDirty, s"version=$headVersion cannot be dirty")
   require(
-    headCommit.tags.exists { case ReleaseVersion(v) => v == headVersion },
+    headCommit.tags.exists {
+      case ReleaseVersion(v) => v == headVersion
+      case other => sys.error(s"Unexpected: $other")
+    },
     s"head=$headCommit should be tagged with version=$headVersion")
 }
 

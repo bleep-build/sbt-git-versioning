@@ -2,7 +2,6 @@ package com.rallyhealth.sbt.versioning
 
 import se.sawano.java.text.AlphanumericComparator
 
-import scala.language.implicitConversions
 import scala.util.matching.Regex
 
 /**

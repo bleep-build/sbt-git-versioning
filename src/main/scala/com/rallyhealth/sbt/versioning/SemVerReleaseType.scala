@@ -31,7 +31,7 @@ object SemVerReleaseType {
       case "major" => Some(Major)
       case "minor" => Some(Minor)
       case "patch" => Some(Patch)
-      case other => None
+      case _ => None
     }
   }
 
@@ -58,8 +58,8 @@ object SemVerReleaseType {
           // Release versions should be incremented normally.
           // Snapshot versions are already incremented as a patch over the previous version
           originalVersion match {
-            case rv: ReleaseVersion => v.copy(patch = v.patch + 1)
-            case sv: SnapshotVersion => v
+            case _: ReleaseVersion => v.copy(patch = v.patch + 1)
+            case _: SnapshotVersion => v
           }
       }
     }

@@ -2,7 +2,6 @@ package com.rallyhealth.sbt.versioning
 
 import java.io.File
 
-import sbt.util._
 import scala.sys.process._
 
 /**
@@ -86,7 +85,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
       case 0 =>
         val gitVersion = outputLogger.stdout.mkString("").trim.toLowerCase
         gitVersion match {
-          case gitSemver(major, minor, patch) =>
+          case gitSemver(major, minor@_, patch@_) =>
             major.toInt > 1
           case _ =>
             throw new GitException(
@@ -128,7 +127,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
       case Some(headCommit) =>
 
         // we only care about the RELEASE commits so let's get them in order from reflog
-        val releaseRefs: Seq[(GitCommit, ReleaseVersion)] = gitForEachRef("").collect { case gc @ ReleaseVersion(rv) => (gc, rv) }
+        val releaseRefs: Seq[(GitCommit, ReleaseVersion)] = gitForEachRef.collect { case gc @ ReleaseVersion(rv) => (gc, rv) }
 
         // We only care about the current release and previous release so let's take the top two.
         // Then we want to find out what which git log commit is associated to the reflog sha.
@@ -199,7 +198,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
   /**
     * Returns an ordered list of versions that are merged into your branch.
     */
-  private def gitForEachRef(arguments: String): Seq[GitCommit] = {
+  private def gitForEachRef: Seq[GitCommit] = {
     require(isGitRepo(dir), "Must be in a git repository")
     require(isGitCompatible, "Must be git version 2.X.X or greater")
 
@@ -307,7 +306,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
     require(isGitCompatible, "Must be git version 2.X.X or greater")
     val outputLogger = new BufferingProcessLogger
     val exitCode: Int = Process(cmd, dir) ! outputLogger
-    val result = (exitCode, outputLogger.stdout)
+    val result = (exitCode, outputLogger.stdout.toSeq)
 
     if (throwIfNonZero && exitCode != 0)
       throw new IllegalStateException(s"Non-zero exit code when running '$cmd': $exitCode")
