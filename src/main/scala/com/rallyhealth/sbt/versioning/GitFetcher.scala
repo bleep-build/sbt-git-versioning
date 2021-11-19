@@ -1,6 +1,6 @@
 package com.rallyhealth.sbt.versioning
 
-import bleep.Logger
+import bleep.logging.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration

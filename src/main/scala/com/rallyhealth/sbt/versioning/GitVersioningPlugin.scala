@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 
 /** Enforces Semantic Version plus support for identifying "x.y.z-SNAPSHOT" and "x.y.z-dirty-SNAPSHOT" builds.
   */
-class GitVersioningPlugin(baseDirectory: Path, logger: bleep.Logger)(
+class GitVersioningPlugin(baseDirectory: Path, logger: bleep.logging.Logger)(
     // `autoFetch` indicates whether to auto-fetch tags from remotes
     val autoFetch: Boolean = Option(System.getProperty("version.autoFetch"))
       .orElse(Option(System.getenv("VERSION_AUTOFETCH")))
@@ -154,7 +154,6 @@ class GitVersioningPlugin(baseDirectory: Path, logger: bleep.Logger)(
     gitVersioningMaybeRelease.foreach { relType =>
       logger.info(s"Release type: $relType")
     }
-    logger.success(s"Successfully determined version: ${versionOverride.getOrElse(versionFromGit)}")
+    logger.info(s"Successfully determined version: ${versionOverride.getOrElse(versionFromGit)}")
   }
-
 }
