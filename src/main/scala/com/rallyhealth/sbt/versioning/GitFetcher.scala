@@ -75,8 +75,7 @@ object GitFetcher {
         logger.error(s"Fetching remote=$remote timed out [git exitCode=${process.exitValue()}]")
         Seq.empty
       case NonFatal(exc) =>
-        logger.error(s"Fetching remote=$remote failed [git exitCode=${process.exitValue()}]")
-        logger.trace(exc)
+        logger.error(s"Fetching remote=$remote failed [git exitCode=${process.exitValue()}]", exc)
         Seq.empty
     }
   }
