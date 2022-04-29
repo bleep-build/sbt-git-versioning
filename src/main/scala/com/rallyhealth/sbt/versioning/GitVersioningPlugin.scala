@@ -136,7 +136,7 @@ class GitVersioningPlugin(baseDirectory: Path, logger: bleep.logging.Logger)(
 
   /** `isCleanRelease` is whether the 'version' is a clean release or not (NOT based on the working dir) Note this can be overriden by [[ignoreDirty]].
     */
-  def isCleanRelease() = {
+  def isCleanRelease(): Boolean = {
     // version must be semver, see version's definition
     val isDirty = semanticVersion.isDirty
 
@@ -146,7 +146,7 @@ class GitVersioningPlugin(baseDirectory: Path, logger: bleep.logging.Logger)(
   }
 
   // Prints the version that would be applied to this sbt project
-  def printVersion() = {
+  def printVersion(): Unit = {
     logger.info(s"Version as determined by git history: ${versionFromGit}")
     versionOverride.foreach { verOverride =>
       logger.info(s"Version as determined by system property (version.override): $verOverride")
