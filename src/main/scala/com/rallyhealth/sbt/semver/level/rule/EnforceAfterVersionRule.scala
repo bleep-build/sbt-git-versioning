@@ -1,8 +1,8 @@
-package com.rallyhealth.sbt.semver.level.rule
+package bleep.plugin.semver.level.rule
 
-import com.rallyhealth.sbt.semver.level.{SemVerEnforcementLevel, SemVerLevelRule}
-import com.rallyhealth.sbt.versioning.SemVerReleaseType.Major
-import com.rallyhealth.sbt.versioning.{ReleaseVersion, SemanticVersion}
+import bleep.plugin.semver.level.{SemVerEnforcementLevel, SemVerLevelRule}
+import bleep.plugin.versioning.SemVerReleaseType.Major
+import bleep.plugin.versioning.{ReleaseVersion, SemanticVersion}
 
 case class EnforceAfterVersionRule(current: SemanticVersion, maybeEnforceAfterVersion: Option[ReleaseVersion]) extends SemVerLevelRule {
 

@@ -1,7 +1,7 @@
-package com.rallyhealth.sbt.semver
+package bleep.plugin.semver
 
-import com.rallyhealth.sbt.semver.SemVerDiff.Delta.DiffType
-import com.rallyhealth.sbt.versioning.{ReleaseVersion}
+import bleep.plugin.semver.SemVerDiff.Delta.DiffType
+import bleep.plugin.versioning.ReleaseVersion
 
 object SemVerDiff {
 

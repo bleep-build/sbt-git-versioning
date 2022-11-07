@@ -1,6 +1,6 @@
-package com.rallyhealth.sbt.semver
+package bleep.plugin.semver
 
-import com.rallyhealth.sbt.versioning.ReleaseVersion
+import bleep.plugin.versioning.ReleaseVersion
 
 /**
   * Qualifies the "current" (as opposed to "previous") [[ReleaseVersion]] when comparing for SemVer violations. The
@@ -19,7 +19,7 @@ sealed trait SemVerTargetVersion {
 case class SemVerLimitTargetVersion(version: ReleaseVersion) extends SemVerTargetVersion
 
 /**
-  * If the user sets [[com.rallyhealth.sbt.versioning.GitVersioningPlugin.autoImport.versionOverride]] then the
+  * If the user sets [[bleep.plugin.versioning.GitVersioningPlugin.autoImport.versionOverride]] then the
   * [[ReleaseVersion]] is the specific version that is being published.
   *
   * This class should ALWAYS have higher precedence than [[SemVerLimitTargetVersion]].

@@ -1,4 +1,4 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 /**
   * Defines major/minor/patch values that do not represent an exact version,

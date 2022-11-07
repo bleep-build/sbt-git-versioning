@@ -1,4 +1,4 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 /** Convenience/helper class that makes dealing with multiple [[SemVerIdentifier]]s a little easier. */
 case class SemVerIdentifierList(values: Seq[SemVerIdentifier]) extends Ordered[SemVerIdentifierList] {

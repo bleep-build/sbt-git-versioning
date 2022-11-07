@@ -1,7 +1,6 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 import java.io.File
-
 import scala.sys.process._
 
 /**

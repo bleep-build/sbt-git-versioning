@@ -1,6 +1,6 @@
-package com.rallyhealth.sbt.semver.level
+package bleep.plugin.semver.level
 
-import com.rallyhealth.sbt.versioning.SemVerReleaseType
+import bleep.plugin.versioning.SemVerReleaseType
 
 /**
   * @see [[SemVerEnforcementLevel]]

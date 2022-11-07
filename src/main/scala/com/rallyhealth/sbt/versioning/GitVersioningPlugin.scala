@@ -1,7 +1,7 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
-import com.rallyhealth.sbt.versioning.GitFetcher.FetchResult
-import com.rallyhealth.sbt.versioning.LowerBoundedSemanticVersion._
+import bleep.plugin.versioning.GitFetcher.FetchResult
+import bleep.plugin.versioning.LowerBoundedSemanticVersion._
 
 import java.nio.file.Path
 import scala.concurrent.duration._

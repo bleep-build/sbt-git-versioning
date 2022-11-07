@@ -1,6 +1,6 @@
-package com.rallyhealth.sbt.semver
+package bleep.plugin.semver
 
-import com.rallyhealth.sbt.versioning.{ReleaseVersion, SemanticVersion}
+import bleep.plugin.versioning.{ReleaseVersion, SemanticVersion}
 
 class VersionDowngradeException(val current: SemanticVersion, val prev: ReleaseVersion) extends Exception(
   s"prev.version=$prev cannot be equal or greater than curr.version=$current"

@@ -1,4 +1,4 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 sealed trait SemVerReleaseType extends Ordered[SemVerReleaseType] {
 

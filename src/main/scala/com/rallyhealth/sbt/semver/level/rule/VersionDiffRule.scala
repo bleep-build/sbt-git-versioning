@@ -1,9 +1,9 @@
-package com.rallyhealth.sbt.semver.level.rule
+package bleep.plugin.semver.level.rule
 
-import com.rallyhealth.sbt.semver.SemVerDiff
-import com.rallyhealth.sbt.semver.level.{SemVerEnforcementLevel, SemVerLevelRule}
-import com.rallyhealth.sbt.versioning.SemVerReleaseType._
-import com.rallyhealth.sbt.versioning.{ReleaseVersion, SemVerReleaseType, SemanticVersion, SnapshotVersion}
+import bleep.plugin.semver.SemVerDiff
+import bleep.plugin.semver.level.{SemVerEnforcementLevel, SemVerLevelRule}
+import bleep.plugin.versioning.SemVerReleaseType._
+import bleep.plugin.versioning.{ReleaseVersion, SemVerReleaseType, SemanticVersion, SnapshotVersion}
 
 case class VersionDiffRule(current: SemanticVersion, maybePrevRelease: Option[ReleaseVersion]) extends SemVerLevelRule {
 

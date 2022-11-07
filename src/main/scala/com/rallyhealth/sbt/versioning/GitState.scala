@@ -1,4 +1,4 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 /**
   * State of a git working directory that can be computed once and re-used. This data is created by [[GitDriver]].

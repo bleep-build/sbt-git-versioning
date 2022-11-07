@@ -1,12 +1,12 @@
-package com.rallyhealth.sbt.versioning
+package bleep.plugin.versioning
 
 import bleep.logging.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, TimeoutException}
-import scala.util.control.NonFatal
 import scala.sys.process.Process
+import scala.util.control.NonFatal
 
 /** Utility code to fetch history from Git. */
 object GitFetcher {
