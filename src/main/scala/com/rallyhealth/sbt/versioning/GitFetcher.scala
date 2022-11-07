@@ -16,10 +16,10 @@ object GitFetcher {
   // Example Match: * [new tag]         v0.2.7     -> v0.2.7
   private val tagResultRegex = """ \* \[new tag\][ ]+([\S]+).*""".r
 
-  /**
-    * Fetches tags from all remote sources.
+  /** Fetches tags from all remote sources.
     *
-    * @param remotes Remote sources whose contents should be fetched AFTER fetching the list of tags.
+    * @param remotes
+    *   Remote sources whose contents should be fetched AFTER fetching the list of tags.
     */
   def fetchRemotes(timeout: Duration)(implicit logger: Logger): Seq[FetchResult] = {
     val outputLogger = new BufferingProcessLogger

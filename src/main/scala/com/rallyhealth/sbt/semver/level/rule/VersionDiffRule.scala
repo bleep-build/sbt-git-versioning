@@ -7,7 +7,7 @@ import bleep.plugin.versioning.{ReleaseVersion, SemVerReleaseType, SemanticVersi
 
 case class VersionDiffRule(current: SemanticVersion, maybePrevRelease: Option[ReleaseVersion]) extends SemVerLevelRule {
 
-  override def calcLevel(): Option[SemVerEnforcementLevel] = {
+  override def calcLevel(): Option[SemVerEnforcementLevel] =
     maybePrevRelease match {
       case None => Some(DisabledBecauseNoPreviousRelease)
       case Some(prevRelease) =>
@@ -26,24 +26,25 @@ case class VersionDiffRule(current: SemanticVersion, maybePrevRelease: Option[Re
           Some(new NormalVersionBump(releaseType, prevRelease, currentRelease))
         }
     }
-  }
 }
 
-case object DisabledBecauseNoPreviousRelease extends SemVerEnforcementLevel(
-  releaseType = Major,
-  explanation = "No previous versions to compare against."
-)
+case object DisabledBecauseNoPreviousRelease
+    extends SemVerEnforcementLevel(
+      releaseType = Major,
+      explanation = "No previous versions to compare against."
+    )
 
 class NormalVersionBump(
-  releaseType: SemVerReleaseType,
-  prevRelease: ReleaseVersion,
-  currentRelease: ReleaseVersion
+    releaseType: SemVerReleaseType,
+    prevRelease: ReleaseVersion,
+    currentRelease: ReleaseVersion
 ) extends SemVerEnforcementLevel(releaseType, s"$prevRelease => $currentRelease")
 
-case class MinorOkayForSnapshot(version: SemanticVersion) extends SemVerEnforcementLevel(
-  releaseType = Minor,
-  explanation = "SNAPSHOT rules are relaxed for convenience and may include up to minor changes. " +
-  "This is not part of the SemVer spec, but GitVersioningPlugin can't do this automatically " +
-  "without requiring you to manually bump semVerLimit every time you add a method. " +
-  "Minor version bumps are enforced only at release time."
-)
+case class MinorOkayForSnapshot(version: SemanticVersion)
+    extends SemVerEnforcementLevel(
+      releaseType = Minor,
+      explanation = "SNAPSHOT rules are relaxed for convenience and may include up to minor changes. " +
+        "This is not part of the SemVer spec, but GitVersioningPlugin can't do this automatically " +
+        "without requiring you to manually bump semVerLimit every time you add a method. " +
+        "Minor version bumps are enforced only at release time."
+    )

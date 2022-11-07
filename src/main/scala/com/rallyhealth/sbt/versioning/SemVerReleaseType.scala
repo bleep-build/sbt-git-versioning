@@ -19,46 +19,45 @@ object SemVerReleaseType {
   val AscSeverityOrder: Seq[SemVerReleaseType] = Seq(Patch, Minor, Major)
 
   @throws[IllegalArgumentException]("for invalid values")
-  def fromStringOrThrow(s: String): SemVerReleaseType = {
+  def fromStringOrThrow(s: String): SemVerReleaseType =
     s match {
       case SemVerReleaseType(valid) => valid
-      case invalid => throw new IllegalArgumentException(s"release type $invalid must be one of: {major, minor, patch}")
+      case invalid                  => throw new IllegalArgumentException(s"release type $invalid must be one of: {major, minor, patch}")
     }
-  }
 
-  def unapply(s: String): Option[SemVerReleaseType] = {
+  def unapply(s: String): Option[SemVerReleaseType] =
     s.trim.toLowerCase match {
       case "major" => Some(Major)
       case "minor" => Some(Minor)
       case "patch" => Some(Patch)
-      case _ => None
+      case _       => None
     }
-  }
 
   implicit class ReleaseableSemanticVersion(val originalVersion: SemanticVersion) extends AnyVal {
 
-    /**
-      * Increases the version by some [[SemVerReleaseType]].
+    /** Increases the version by some [[SemVerReleaseType]].
       */
     def release(releaseType: SemVerReleaseType): ReleaseVersion = {
       // Convert the unknown version to a release version without any increments yet.
       val v = originalVersion.toRelease.copy(versionIdentifiers = SemVerIdentifierList.empty)
 
       releaseType match {
-        case Major => v.copy(
-          major = v.major + 1,
-          minor = 0,
-          patch = 0
-        )
-        case Minor => v.copy(
-          minor = v.minor + 1,
-          patch = 0
-        )
+        case Major =>
+          v.copy(
+            major = v.major + 1,
+            minor = 0,
+            patch = 0
+          )
+        case Minor =>
+          v.copy(
+            minor = v.minor + 1,
+            patch = 0
+          )
         case Patch =>
           // Release versions should be incremented normally.
           // Snapshot versions are already incremented as a patch over the previous version
           originalVersion match {
-            case _: ReleaseVersion => v.copy(patch = v.patch + 1)
+            case _: ReleaseVersion  => v.copy(patch = v.patch + 1)
             case _: SnapshotVersion => v
           }
       }

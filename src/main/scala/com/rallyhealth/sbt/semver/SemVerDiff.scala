@@ -5,22 +5,23 @@ import bleep.plugin.versioning.ReleaseVersion
 
 object SemVerDiff {
 
-  /**
-    * Describes the difference between two [[SemanticVersion]] instances. Note that NEGATIVE differences may be
-    * returned, but do not necessarily signal a downgrade, e.g. 1.2.3 to 2.0.0 is +1.-2.-3.
+  /** Describes the difference between two [[SemanticVersion]] instances. Note that NEGATIVE differences may be returned, but do not necessarily signal a
+    * downgrade, e.g. 1.2.3 to 2.0.0 is +1.-2.-3.
     *
-    * @param major Delta of major increment
-    * @param minor Delta of minor increment
-    * @param patch Delta of patch increment
+    * @param major
+    *   Delta of major increment
+    * @param minor
+    *   Delta of minor increment
+    * @param patch
+    *   Delta of patch increment
     */
   case class Delta(major: Int, minor: Int, patch: Int) {
 
-    val diff: DiffType.Value = {
+    val diff: DiffType.Value =
       if (major != 0) DiffType.Major
       else if (minor != 0) DiffType.Minor
       else if (patch != 0) DiffType.Patch
       else DiffType.None
-    }
   }
 
   object Delta {
@@ -35,10 +36,10 @@ object SemVerDiff {
 
   }
 
-  /**
-    * Creates a [[SemVerDiff]] from two different [[SemanticVersion]]s.
+  /** Creates a [[SemVerDiff]] from two different [[SemanticVersion]]s.
     *
-    * @param prev The previous version that was released in the past.
+    * @param prev
+    *   The previous version that was released in the past.
     */
   def calc(prev: ReleaseVersion, target: ReleaseVersion): Delta = {
     require(!prev.isDirty, s"prev=$prev cannot be dirty")

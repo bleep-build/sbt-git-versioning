@@ -2,14 +2,12 @@ package bleep.plugin.versioning
 
 import scala.util.matching.Regex
 
-/**
-  * Describes a single "version" of an artifact (that may or may not be published or even exist). Ideally the version
-  * will follow Semantic Version philosophy and formatting, but we can't always guarantee that.
+/** Describes a single "version" of an artifact (that may or may not be published or even exist). Ideally the version will follow Semantic Version philosophy
+  * and formatting, but we can't always guarantee that.
   *
-  * A version is created from the working directory, not simply typically from a Git tag or artifact version. To be
-  * clear a version may include commit count and whether it is dirty or not, which may seem weird but is technically
-  * part of the version of the artifact. This is an important distinction, because its more inclusive than just the
-  * version of what Git knows about, i.e. working changes are not recorded in git history.
+  * A version is created from the working directory, not simply typically from a Git tag or artifact version. To be clear a version may include commit count and
+  * whether it is dirty or not, which may seem weird but is technically part of the version of the artifact. This is an important distinction, because its more
+  * inclusive than just the version of what Git knows about, i.e. working changes are not recorded in git history.
   */
 sealed trait SemanticVersion extends Ordered[SemanticVersion] {
 
@@ -24,8 +22,7 @@ sealed trait SemanticVersion extends Ordered[SemanticVersion] {
   /** Everything that is tacked on after the major.minor.patch */
   def identifiers: SemVerIdentifierList
 
-  /**
-    * Only the identifiers that matter to versioning.
+  /** Only the identifiers that matter to versioning.
     */
   def versionIdentifiers: SemVerIdentifierList
 
@@ -38,18 +35,14 @@ sealed trait SemanticVersion extends Ordered[SemanticVersion] {
     s"$major.$minor.$patch" + (if (tagStr.isEmpty) "" else SemVerIdentifierList.separatorChar.toString + tagStr)
   }
 
-  /**
-    * [[http://semver.org/#spec-item-9]]:
-    * Pre-release versions have a lower precedence than the associated normal version.
-    * A pre-release version indicates that the version is unstable and might not satisfy
-    * the intended compatibility requirements as denoted by its associated normal version.
-    * Examples: 1.0.0-alpha, 1.0.0-alpha.1, 1.0.0-0.3.7, 1.0.0-x.7.z.92.
+  /** [[http://semver.org/#spec-item-9]]: Pre-release versions have a lower precedence than the associated normal version. A pre-release version indicates that
+    * the version is unstable and might not satisfy the intended compatibility requirements as denoted by its associated normal version. Examples: 1.0.0-alpha,
+    * 1.0.0-alpha.1, 1.0.0-0.3.7, 1.0.0-x.7.z.92.
     *
-    * [[http://semver.org/#spec-item-11]]:
-    * Precedence for two pre-release versions with the same major, minor, and patch version MUST be determined
-    * by comparing each dot separated identifier from left to right until a difference is found as follows:
-    * - identifiers consisting of only digits are compared numerically
-    * - and identifiers with letters or hyphens are compared lexically in ASCII sort order.
+    * [[http://semver.org/#spec-item-11]]: Precedence for two pre-release versions with the same major, minor, and patch version MUST be determined by comparing
+    * each dot separated identifier from left to right until a difference is found as follows:
+    *   - identifiers consisting of only digits are compared numerically
+    *   - and identifiers with letters or hyphens are compared lexically in ASCII sort order.
     *
     * Numeric identifiers always have lower precedence than non-numeric identifiers.
     */
@@ -75,14 +68,14 @@ sealed trait SemanticVersion extends Ordered[SemanticVersion] {
 
   def setDirty(value: Boolean): SemanticVersion
 
-  /**
-    * True if this is a initial development version -- the major version is 0, e.g. 0.0.1 or 0.1.0.
-    * @see http://semver.org/#spec-item-4
+  /** True if this is a initial development version -- the major version is 0, e.g. 0.0.1 or 0.1.0.
+    * @see
+    *   http://semver.org/#spec-item-4
     */
   def isInitialDevVersion: Boolean = major == 0
 
-  /**
-    * @return the current major, minor, patch, identifiers, and dirty status as a release version.
+  /** @return
+    *   the current major, minor, patch, identifiers, and dirty status as a release version.
     */
   def toRelease: ReleaseVersion
 }
@@ -95,30 +88,27 @@ object SemanticVersion {
   /** Splits a "x.y.z" string into a Tuple of Ints. */
   private object VersionExtractor {
 
-    def unapply(version: String): Option[(Int, Int, Int)] = {
+    def unapply(version: String): Option[(Int, Int, Int)] =
       version.split('.').map(_.toInt) match {
         case Array(x, y, z) => Some((x, y, z))
-        case _ => None
+        case _              => None
       }
-    }
   }
 
   /** Splits a "-id1-id2" string into sequence of [[StringSemVerIdentifier]]. */
   private object IdentifierExtractor {
 
-    def unapply(version: String): Option[Seq[StringSemVerIdentifier]] = {
+    def unapply(version: String): Option[Seq[StringSemVerIdentifier]] =
       version.split(SemVerIdentifierList.separatorChar).filter(_.nonEmpty) match {
         case data if data.isEmpty => Some(Seq.empty)
-        case data => Some(data.toSeq.map(StringSemVerIdentifier(_)))
+        case data                 => Some(data.toSeq.map(StringSemVerIdentifier(_)))
       }
-    }
   }
 
-  /**
-    * Creates a [[SemanticVersion]] from the provided string.
+  /** Creates a [[SemanticVersion]] from the provided string.
     *
-    * This will NOT call [[SnapshotVersion.nextVersion()]] since this is returning the version of the string, it does
-    * not assume it is deciding the version of the current project.
+    * This will NOT call [[SnapshotVersion.nextVersion()]] since this is returning the version of the string, it does not assume it is deciding the version of
+    * the current project.
     *
     * This adheres to the README.md "Version Format" text.
     */
@@ -141,20 +131,18 @@ object SemanticVersion {
   }
 }
 
-/**
-  * A released version, a x.y.z type release. Contrast with [[SnapshotVersion]].
+/** A released version, a x.y.z type release. Contrast with [[SnapshotVersion]].
   *
-  * @param isDirty if True the [[SemVerIdentifierList]]s will contain [[StringSemVerIdentifier.dirty]]
+  * @param isDirty
+  *   if True the [[SemVerIdentifierList]]s will contain [[StringSemVerIdentifier.dirty]]
   */
-case class ReleaseVersion(
-  major: Int, minor: Int, patch: Int, versionIdentifiers: SemVerIdentifierList = SemVerIdentifierList.empty, isDirty: Boolean = false)
-  extends SemanticVersion {
+case class ReleaseVersion(major: Int, minor: Int, patch: Int, versionIdentifiers: SemVerIdentifierList = SemVerIdentifierList.empty, isDirty: Boolean = false)
+    extends SemanticVersion {
 
-  override val identifiers: SemVerIdentifierList = {
+  override val identifiers: SemVerIdentifierList =
     SemVerIdentifierList.empty ++
       versionIdentifiers ++
       (if (isDirty) Seq(StringSemVerIdentifier.dirty, StringSemVerIdentifier.snapshot) else Seq.empty)
-  }
 
   override def setDirty(value: Boolean): SemanticVersion =
     if (isDirty == value) this else copy(isDirty = value)
@@ -194,32 +182,29 @@ object ReleaseVersion {
   def unapply(string: String): Option[ReleaseVersion] =
     SemanticVersion.fromString(string).collect { case v: ReleaseVersion => v }
 
-  def parseAsCleanOrThrow(value: String): ReleaseVersion = {
+  def parseAsCleanOrThrow(value: String): ReleaseVersion =
     unapply(value)
       .filter(!_.isDirty)
-      .getOrElse(
-        throw new IllegalArgumentException(s"[SemVer] Config problem: cannot parse value=$value as clean release version"))
-  }
+      .getOrElse(throw new IllegalArgumentException(s"[SemVer] Config problem: cannot parse value=$value as clean release version"))
 
-  /**
-    * This returns the [[ReleaseVersion]] from the first [[GitCommit.tags]], using [[unapply()]], if such a tag
-    * exists.
+  /** This returns the [[ReleaseVersion]] from the first [[GitCommit.tags]], using [[unapply()]], if such a tag exists.
     *
-    * This only returns [[ReleaseVersion]]s because a [[GitCommit]] should never be tagged with a [[SnapshotVersion]] --
-    * those are always computed based on previous [[ReleaseVersion]]s.
+    * This only returns [[ReleaseVersion]]s because a [[GitCommit]] should never be tagged with a [[SnapshotVersion]] -- those are always computed based on
+    * previous [[ReleaseVersion]]s.
     *
-    * @return None if no tags that can be parsed as a [[ReleaseVersion]]
+    * @return
+    *   None if no tags that can be parsed as a [[ReleaseVersion]]
     */
   def fromCommit(commit: GitCommit): Option[ReleaseVersion] = {
     val releases =
-      commit.tags.flatMap(SemanticVersion.fromString)
+      commit.tags
+        .flatMap(SemanticVersion.fromString)
         .collect { case x: ReleaseVersion if !x.isDirty => x }
 
     releases.sorted[SemanticVersion].lastOption
   }
 
-  /**
-    * Sugar to allow easy setting of values using strings in the sbt console or builds.
+  /** Sugar to allow easy setting of values using strings in the sbt console or builds.
     *
     * For example:
     * {{{
@@ -234,29 +219,25 @@ object ReleaseVersion {
   implicit def fromStringToMaybeReleaseVersion(s: String): Option[ReleaseVersion] = unapply(s)
 }
 
-/**
-  * A pre-release version, something that is not fully released, of the form x.y.z-SNAPSHOT. This will always
-  * contain the [[StringSemVerIdentifier.snapshot]]
+/** A pre-release version, something that is not fully released, of the form x.y.z-SNAPSHOT. This will always contain the [[StringSemVerIdentifier.snapshot]]
   */
 case class SnapshotVersion(
-  major: Int,
-  minor: Int,
-  patch: Int,
-  versionIdentifiers: SemVerIdentifierList,
-  isDirty: Boolean,
-  commitHash: HashSemVerIdentifier,
-  commitsSincePrevRelease: CommitsSemVerIdentifier)
-  extends SemanticVersion {
+    major: Int,
+    minor: Int,
+    patch: Int,
+    versionIdentifiers: SemVerIdentifierList,
+    isDirty: Boolean,
+    commitHash: HashSemVerIdentifier,
+    commitsSincePrevRelease: CommitsSemVerIdentifier
+) extends SemanticVersion {
 
-  override val identifiers: SemVerIdentifierList = {
-    (
-      SemVerIdentifierList.empty ++
+  override val identifiers: SemVerIdentifierList =
+    (SemVerIdentifierList.empty ++
       versionIdentifiers :+
       commitsSincePrevRelease :+
       commitHash) ++
       (if (isDirty) Seq(StringSemVerIdentifier.dirty) else Seq.empty) :+
       StringSemVerIdentifier.snapshot
-  }
 
   override def setDirty(value: Boolean): SemanticVersion =
     if (isDirty == value) this else copy(isDirty = value)
@@ -285,19 +266,15 @@ case class SnapshotVersion(
         majorMinorPatchDelta
   }
 
-  /**
-    * Increments the patch version, used by [[GitDriver.calcCurrentVersion()]].
+  /** Increments the patch version, used by [[GitDriver.calcCurrentVersion()]].
     *
-    * I'm not sure why this is done, I think its a Maven versioning scheme. It does NOT match "git describe", which
-    * simply suffixes the existing tag.
+    * I'm not sure why this is done, I think its a Maven versioning scheme. It does NOT match "git describe", which simply suffixes the existing tag.
     */
   def nextVersion(): SnapshotVersion = copy(patch = patch + 1)
 
-  /**
-    * Reverts the behavior of [[nextVersion()]], which allows for more natural comparisons.
+  /** Reverts the behavior of [[nextVersion()]], which allows for more natural comparisons.
     *
-    * This is best explained with an example (without the cruft of building actual [[ReleaseVersion]] and
-    * [[SnapshotVersion]] instances:
+    * This is best explained with an example (without the cruft of building actual [[ReleaseVersion]] and [[SnapshotVersion]] instances:
     * {{{
     *   val firstVer = "1.0.0"
     *   val secondVer = "1.0.1"
@@ -335,31 +312,24 @@ object SnapshotVersion {
     (versionPrefix.toString() + commitCountAndHashPattern + dirtyIdentifierRegex + s"-${StringSemVerIdentifier.snapshot}").r
   }
 
-  /**
-    * The first version, the "In the beginning" version, the version from which all other versions come forth.
-    * This is intended to be used when there are no commits or previous tags we can bas
+  /** The first version, the "In the beginning" version, the version from which all other versions come forth. This is intended to be used when there are no
+    * commits or previous tags we can bas
     */
   def createInitialVersion(commit: GitCommitWithCount): SnapshotVersion =
     SnapshotVersion(0, 0, 1, SemVerIdentifierList.empty, isDirty = false, commit.commit.abbreviatedHash, commit.count)
 
-  /**
-    * Creates a [[SnapshotVersion]] when you have a previous [[ReleaseVersion]] and a commit that is AFTER the
-    * commit that was tagged with [[ReleaseVersion]], i.e. [[ReleaseVersion]]'s commit != `commit` parameter
+  /** Creates a [[SnapshotVersion]] when you have a previous [[ReleaseVersion]] and a commit that is AFTER the commit that was tagged with [[ReleaseVersion]],
+    * i.e. [[ReleaseVersion]]'s commit != `commit` parameter
     *
-    * @param release The previous [[ReleaseVersion]], the "base" version if you will.
-    * @param commit The commit you want to use to make a [[SnapshotVersion]].
+    * @param release
+    *   The previous [[ReleaseVersion]], the "base" version if you will.
+    * @param commit
+    *   The commit you want to use to make a [[SnapshotVersion]].
     */
   def createAfterRelease(release: ReleaseVersion, commit: GitCommitWithCount): SnapshotVersion = {
     require(!commit.commit.tags.contains(release.toString), "commit should NOT be tagged with version")
 
-    SnapshotVersion(
-      release.major,
-      release.minor,
-      release.patch + 1,
-      release.identifiers,
-      isDirty = false,
-      commit.commit.abbreviatedHash,
-      commit.count)
+    SnapshotVersion(release.major, release.minor, release.patch + 1, release.identifiers, isDirty = false, commit.commit.abbreviatedHash, commit.count)
   }
 
 }

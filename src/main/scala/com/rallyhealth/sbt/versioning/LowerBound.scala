@@ -1,8 +1,7 @@
 package bleep.plugin.versioning
 
-/**
-  * Defines major/minor/patch values that do not represent an exact version,
-  * but rather a subset of version components that may be compared against [[SemanticVersion]]'s components.
+/** Defines major/minor/patch values that do not represent an exact version, but rather a subset of version components that may be compared against
+  * [[SemanticVersion]]'s components.
   */
 case class LowerBound(major: Int, minor: Int, patch: Int) {
 
@@ -19,7 +18,7 @@ object LowerBound {
 
   implicit def stringToLowerBound(s: String): LowerBound = s match {
     case Pattern(major, minor, patch) => LowerBound(major.toInt, minor.toInt, patch.toInt)
-    case invalid => throw new IllegalArgumentException(s"invalid LowerBound: $invalid")
+    case invalid                      => throw new IllegalArgumentException(s"invalid LowerBound: $invalid")
   }
 
   implicit def stringToSomeLowerBound(s: String): Option[LowerBound] = Some(s)

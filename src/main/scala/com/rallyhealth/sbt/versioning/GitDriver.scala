@@ -3,34 +3,31 @@ package bleep.plugin.versioning
 import java.io.File
 import scala.sys.process._
 
-/**
-  * Driver that allows executing common commands against a git working directory.
+/** Driver that allows executing common commands against a git working directory.
   *
   * See also [[GitFetcher]].
   */
 trait GitDriver {
 
-  /** Used to find the previous version and to check whether the HEAD and version commit are the same   */
+  /** Used to find the previous version and to check whether the HEAD and version commit are the same */
   def branchState: GitBranchState
 
   /** Used to determine whether the current version is dirty or not. */
   def workingState: GitWorkingState
 
-  /**
-    * Returns the number of commits in this repository, up to but not including the optional limit.
+  /** Returns the number of commits in this repository, up to but not including the optional limit.
     *
-    * @param hash A commit hash to stop counting. This will NOT be included in the count. If None this will count all
-    * commits back to the first commit.
+    * @param hash
+    *   A commit hash to stop counting. This will NOT be included in the count. If None this will count all commits back to the first commit.
     */
   def getCommitCount(hash: Option[String]): Int
 
-  /**
-    * Returns the current version of the code from the branch version AND git's working state. (Including the current
-    * state might seem weird but is technically part of the version -- the version includes not just the prior version
-    * but also the contents of the index of the working directory. Without this we couldn't tell dirty or not.)
+  /** Returns the current version of the code from the branch version AND git's working state. (Including the current state might seem weird but is technically
+    * part of the version -- the version includes not just the prior version but also the contents of the index of the working directory. Without this we
+    * couldn't tell dirty or not.)
     *
-    * @param ignoreDirty Forces clean builds, i.e. when true this will not add '-dirty' to the version (nor
-    * force creating a [[SnapshotVersion]] from a [[ReleaseVersion]]).
+    * @param ignoreDirty
+    *   Forces clean builds, i.e. when true this will not add '-dirty' to the version (nor force creating a [[SnapshotVersion]] from a [[ReleaseVersion]]).
     */
   def calcCurrentVersion(ignoreDirty: Boolean): SemanticVersion = {
 
@@ -59,13 +56,12 @@ trait GitDriver {
   }
 }
 
-/**
-  * Generic utilities for dealing with Git.
+/** Generic utilities for dealing with Git.
   *
   * See also [[GitFetcher]].
   *
-  * @param dir Directory where we can query Git for information. This will be checked to confirm that it is an actual
-  * git clone.
+  * @param dir
+  *   Directory where we can query Git for information. This will be checked to confirm that it is an actual git clone.
   */
 class GitDriverImpl(dir: File) extends GitDriver {
 
@@ -84,11 +80,10 @@ class GitDriverImpl(dir: File) extends GitDriver {
       case 0 =>
         val gitVersion = outputLogger.stdout.mkString("").trim.toLowerCase
         gitVersion match {
-          case gitSemver(major, minor@_, patch@_) =>
+          case gitSemver(major, minor @ _, patch @ _) =>
             major.toInt > 1
           case _ =>
-            throw new GitException(
-              s"""Version output was not of the form 'git version x.y.z'
+            throw new GitException(s"""Version output was not of the form 'git version x.y.z'
               |version was '${gitVersion}'""".stripMargin)
         }
       case unexpected =>
@@ -107,7 +102,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
     // http://stackoverflow.com/a/16925062
     val exitCode: Int = Process(s"""git rev-parse --is-inside-work-tree""", dir) ! outputLogger
     exitCode match {
-      case 0 => outputLogger.stdout.mkString("").trim.toLowerCase == "true"
+      case 0   => outputLogger.stdout.mkString("").trim.toLowerCase == "true"
       case 128 => false // https://stackoverflow.com/a/19441790
       case unexpected =>
         throw new GitException(
@@ -120,11 +115,10 @@ class GitDriverImpl(dir: File) extends GitDriver {
     }
   }
 
-  override val branchState: GitBranchState = {
+  override val branchState: GitBranchState =
     gitLog("--max-count=1").headOption match {
 
       case Some(headCommit) =>
-
         // we only care about the RELEASE commits so let's get them in order from reflog
         val releaseRefs: Seq[(GitCommit, ReleaseVersion)] = gitForEachRef.collect { case gc @ ReleaseVersion(rv) => (gc, rv) }
 
@@ -134,9 +128,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
         // the reference shas are not always the same as the commit shas associated with git log.
         // That is why we have to run the command here to find the correct sha
         // Note: do not move git log into gitForEachRef as on long revisions it will take a LOT of time
-        val releases: Seq[(GitCommit, ReleaseVersion)] = releaseRefs.take(2).map(tp =>
-          (gitLog(s"${tp._1.fullHash} --max-count=1").head, tp._2)
-        )
+        val releases: Seq[(GitCommit, ReleaseVersion)] = releaseRefs.take(2).map(tp => (gitLog(s"${tp._1.fullHash} --max-count=1").head, tp._2))
 
         val maybeCurrRelease = releases.headOption
         val maybePrevRelease = releases.drop(1).headOption
@@ -163,11 +155,9 @@ class GitDriverImpl(dir: File) extends GitDriver {
       case None =>
         GitBranchStateNoCommits
     }
-  }
 
-  override def workingState: GitWorkingState = {
+  override def workingState: GitWorkingState =
     GitWorkingState(!checkClean())
-  }
 
   override def getCommitCount(hash: Option[String]): Int = {
     val limitStr = hash.map("^" + _).getOrElse("")
@@ -175,8 +165,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
     output.mkString("").trim.toInt
   }
 
-  /**
-    * Executes git rev-parse to determine the current branch/HEAD commit
+  /** Executes git rev-parse to determine the current branch/HEAD commit
     */
   private def gitBranch: String = {
     val cmd = s"git rev-parse --abbrev-ref HEAD"
@@ -189,13 +178,11 @@ class GitDriverImpl(dir: File) extends GitDriver {
         }
         res.head
       case 128 =>
-        throw new IllegalStateException(
-          s"Error 128: a git cmd was run in a dir that is not under git vcs or git rev-parse failed to run.")
+        throw new IllegalStateException(s"Error 128: a git cmd was run in a dir that is not under git vcs or git rev-parse failed to run.")
     }
   }
 
-  /**
-    * Returns an ordered list of versions that are merged into your branch.
+  /** Returns an ordered list of versions that are merged into your branch.
     */
   private def gitForEachRef: Seq[GitCommit] = {
     require(isGitRepo(dir), "Must be in a git repository")
@@ -205,8 +192,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
     // invoking an OS process. You could invoke a shell and pass expressions if needed.
     val cmd = s"git for-each-ref --sort=-v:refname refs/tags --merged=${gitBranch}"
 
-    /**
-      * Example output:
+    /** Example output:
       * {{{
       * 686623c25b52e40fe6270ab57419551b88e89dfe tag    refs/tags/v1.0.0
       * fb22d49dd7d7bf5b5f130c4ff3b66667d97bc308 commit refs/tags/v0.0.3
@@ -227,8 +213,7 @@ class GitDriverImpl(dir: File) extends GitDriver {
     }
   }
 
-  /**
-    * Executes a single "git log" command.
+  /** Executes a single "git log" command.
     */
   private def gitLog(arguments: String): Seq[GitCommit] = {
     require(isGitRepo(dir), "Must be in a git repository")
@@ -243,8 +228,8 @@ class GitDriverImpl(dir: File) extends GitDriver {
     //   branch and merged into master.
 
     val cmd = s"git log --oneline --decorate=short --simplify-by-decoration --no-abbrev-commit $arguments"
-    /**
-      * Example output:
+
+    /** Example output:
       * {{{
       *    34f0ea0e25cf4c57bd0b732c03d19fc18492b827 (HEAD -> tagging-test, tag: rawr) [CODE-2] Add tests for tagging.
       *    a204a6127c290305c12a417eb1c6ac5490da86ae (upstream/master, master) [CODE-2] Remove "latest.integration" recommendation. (#43)
@@ -272,14 +257,11 @@ class GitDriverImpl(dir: File) extends GitDriver {
     output.mkString("").isEmpty
   }
 
-  /**
-    * Returns the abbreviated hash length for a Git hash object. The length of a hash is variable depending on the
-    * number of commits.
+  /** Returns the abbreviated hash length for a Git hash object. The length of a hash is variable depending on the number of commits.
     *
-    * See [[https://stackoverflow.com/questions/18134627/how-much-of-a-git-sha-is-generally-considered-necessary-to-uniquely-identify-a]]
-    * and [[https://stackoverflow.com/questions/16413373/git-get-short-hash-from-regular-hash]]
-    * and [[https://stackoverflow.com/questions/32405922/in-my-repo-how-long-must-the-longest-hash-prefix-be-to-prevent-any-overlap]]
-    * for more information.
+    * See [[https://stackoverflow.com/questions/18134627/how-much-of-a-git-sha-is-generally-considered-necessary-to-uniquely-identify-a]] and
+    * [[https://stackoverflow.com/questions/16413373/git-get-short-hash-from-regular-hash]] and
+    * [[https://stackoverflow.com/questions/32405922/in-my-repo-how-long-must-the-longest-hash-prefix-be-to-prevent-any-overlap]] for more information.
     */
   private def findAbbreviatedHashLength(): Int = {
     val (exitCode, output) = runCommand("git rev-parse --short HEAD", throwIfNonZero = false)
@@ -293,12 +275,13 @@ class GitDriverImpl(dir: File) extends GitDriver {
     }
   }
 
-  /**
-    * Executes a single shell command, typically a 'git' command.
+  /** Executes a single shell command, typically a 'git' command.
     *
-    * @param throwIfNonZero If true throws an exception if the exit code is non-zero. Otherwise returns it. True
-    * can simplify your logic if the exit code is only for failure status.
-    * @return ( Exit code, standard output )
+    * @param throwIfNonZero
+    *   If true throws an exception if the exit code is non-zero. Otherwise returns it. True can simplify your logic if the exit code is only for failure
+    *   status.
+    * @return
+    *   ( Exit code, standard output )
     */
   private def runCommand(cmd: String, throwIfNonZero: Boolean = true): (Int, Seq[String]) = {
     require(isGitRepo(dir), "Must be in a git repository")

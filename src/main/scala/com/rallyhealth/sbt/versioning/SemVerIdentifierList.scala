@@ -3,25 +3,20 @@ package bleep.plugin.versioning
 /** Convenience/helper class that makes dealing with multiple [[SemVerIdentifier]]s a little easier. */
 case class SemVerIdentifierList(values: Seq[SemVerIdentifier]) extends Ordered[SemVerIdentifierList] {
 
-  override val toString: String = {
+  override val toString: String =
     if (values.isEmpty)
       ""
     else
       values.mkString(SemVerIdentifierList.separatorChar.toString)
-  }
 
-  /**
-    * [[http://semver.org/#spec-item-9]]:
-    * Pre-release versions have a lower precedence than the associated normal version.
-    * A pre-release version indicates that the version is unstable and might not satisfy
-    * the intended compatibility requirements as denoted by its associated normal version.
-    * Examples: 1.0.0-alpha, 1.0.0-alpha.1, 1.0.0-0.3.7, 1.0.0-x.7.z.92.
+  /** [[http://semver.org/#spec-item-9]]: Pre-release versions have a lower precedence than the associated normal version. A pre-release version indicates that
+    * the version is unstable and might not satisfy the intended compatibility requirements as denoted by its associated normal version. Examples: 1.0.0-alpha,
+    * 1.0.0-alpha.1, 1.0.0-0.3.7, 1.0.0-x.7.z.92.
     *
-    * [[http://semver.org/#spec-item-11]]:
-    * Precedence for two pre-release versions with the same major, minor, and patch version MUST be determined
-    * by comparing each dot separated identifier from left to right until a difference is found as follows:
-    * - identifiers consisting of only digits are compared numerically
-    * - and identifiers with letters or hyphens are compared lexically in ASCII sort order.
+    * [[http://semver.org/#spec-item-11]]: Precedence for two pre-release versions with the same major, minor, and patch version MUST be determined by comparing
+    * each dot separated identifier from left to right until a difference is found as follows:
+    *   - identifiers consisting of only digits are compared numerically
+    *   - and identifiers with letters or hyphens are compared lexically in ASCII sort order.
     *
     * Numeric identifiers always have lower precedence than non-numeric identifiers.
     */
@@ -40,7 +35,7 @@ case class SemVerIdentifierList(values: Seq[SemVerIdentifier]) extends Ordered[S
     } else {
       thisIdentifiers.zipAll(thatIdentifiers, SemVerIdentifier.Empty, SemVerIdentifier.Empty).foldLeft(0) {
         case (result, _) if result != 0 => result
-        case (_, (a, b)) => a.compare(b)
+        case (_, (a, b))                => a.compare(b)
       }
     }
   }
