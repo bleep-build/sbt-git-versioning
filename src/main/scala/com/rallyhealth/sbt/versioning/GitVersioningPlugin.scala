@@ -1,10 +1,11 @@
-package bleep.plugin.versioning
+package bleep
+package plugin.versioning
 
 import bleep.plugin.versioning.GitFetcher.FetchResult
-import bleep.plugin.versioning.LowerBoundedSemanticVersion._
+import bleep.plugin.versioning.LowerBoundedSemanticVersion.*
 
 import java.nio.file.Path
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** Enforces Semantic Version plus support for identifying "x.y.z-SNAPSHOT" and "x.y.z-dirty-SNAPSHOT" builds.
   */
@@ -83,7 +84,7 @@ class GitVersioningPlugin(baseDirectory: Path, logger: bleep.logging.Logger)(
     */
   def versionFromGit: SemanticVersion = {
     // This depends on but does not use [[autoFetchResult]]; that ensures the task is run but ignores the result.
-    autoFetchResult()
+    autoFetchResult().discard()
     val gitVersion = gitDriver.calcCurrentVersion(ignoreDirty)
 
     logger.info(s"GitVersioningPlugin set versionFromGit=$gitVersion")
@@ -95,7 +96,7 @@ class GitVersioningPlugin(baseDirectory: Path, logger: bleep.logging.Logger)(
 
   // The typed representation of `version`
   def semanticVersion: SemanticVersion = {
-    import SemVerReleaseType._
+    import SemVerReleaseType.*
     // version must be semver, see version's definition
     val verOverride = versionOverride.map(
       SemanticVersion
