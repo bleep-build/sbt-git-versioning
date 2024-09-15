@@ -1,7 +1,7 @@
 package bleep.plugin.versioning
 
 import java.io.File
-import scala.sys.process._
+import scala.sys.process.*
 
 /** Driver that allows executing common commands against a git working directory.
   *

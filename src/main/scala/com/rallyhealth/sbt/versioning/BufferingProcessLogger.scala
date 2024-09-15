@@ -1,7 +1,7 @@
 package bleep.plugin.versioning
 
 import scala.collection.mutable
-import scala.sys.process._
+import scala.sys.process.*
 
 /** A [[ProcessLogger]] that buffers all messages into String instance fields. */
 class BufferingProcessLogger extends ProcessLogger {

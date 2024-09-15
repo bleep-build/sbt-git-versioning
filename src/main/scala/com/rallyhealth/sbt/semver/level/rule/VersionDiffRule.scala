@@ -2,7 +2,7 @@ package bleep.plugin.semver.level.rule
 
 import bleep.plugin.semver.SemVerDiff
 import bleep.plugin.semver.level.{SemVerEnforcementLevel, SemVerLevelRule}
-import bleep.plugin.versioning.SemVerReleaseType._
+import bleep.plugin.versioning.SemVerReleaseType.*
 import bleep.plugin.versioning.{ReleaseVersion, SemVerReleaseType, SemanticVersion, SnapshotVersion}
 
 case class VersionDiffRule(current: SemanticVersion, maybePrevRelease: Option[ReleaseVersion]) extends SemVerLevelRule {
