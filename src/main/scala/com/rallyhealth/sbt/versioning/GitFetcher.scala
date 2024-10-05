@@ -1,6 +1,6 @@
 package bleep.plugin.versioning
 
-import bleep.logging.Logger
+import ryddig.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
