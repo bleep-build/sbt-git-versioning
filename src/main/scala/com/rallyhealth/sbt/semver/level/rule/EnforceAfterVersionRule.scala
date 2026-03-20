@@ -6,7 +6,7 @@ import bleep.plugin.versioning.{ReleaseVersion, SemanticVersion}
 
 case class EnforceAfterVersionRule(current: SemanticVersion, maybeEnforceAfterVersion: Option[ReleaseVersion]) extends SemVerLevelRule {
 
-  override def calcLevel() =
+  override def calcLevel(): Option[SemVerEnforcementLevel] =
     maybeEnforceAfterVersion
       .filter(current <= _)
       .map(enforceAfterVersion => DisabledEnforceAfterVersion(enforceAfterVersion))
