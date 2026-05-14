@@ -33,7 +33,7 @@ object GitFetcher {
         val tagsToFetch = remotes.filter(remotes.contains)
         if (tagsToFetch.nonEmpty) {
           logger.info("Fetching tags from: " + tagsToFetch.mkString(", "))
-          tagsToFetch.toSeq.flatMap(remote => fetchTagsFromRemote(remote, timeout)(logger))
+          tagsToFetch.toSeq.flatMap(remote => fetchTagsFromRemote(remote, timeout)(using logger))
         } else {
           logger.debug("No tags to fetch")
           Seq.empty[FetchResult]

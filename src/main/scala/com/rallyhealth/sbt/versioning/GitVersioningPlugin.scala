@@ -74,7 +74,7 @@ class GitVersioningPlugin(baseDirectory: Path, logger: ryddig.Logger)(
   def autoFetchResult() =
     if (autoFetch) {
       logger.info("Fetching the most up-to-date tags from git remotes")
-      GitFetcher.fetchRemotes(autoFetchTimeout.seconds)(logger)
+      GitFetcher.fetchRemotes(autoFetchTimeout.seconds)(using logger)
     } else {
       logger.info("Skipping fetching tags from git remotes; to enable, set the system property version.autoFetch=true")
       Seq.empty[FetchResult]
