@@ -9,7 +9,7 @@ case class VersionDiffRule(current: SemanticVersion, maybePrevRelease: Option[Re
 
   override def calcLevel(): Option[SemVerEnforcementLevel] =
     maybePrevRelease match {
-      case None => Some(DisabledBecauseNoPreviousRelease)
+      case None              => Some(DisabledBecauseNoPreviousRelease)
       case Some(prevRelease) =>
         assert(prevRelease != current, "Prev release and current version must be different.")
 

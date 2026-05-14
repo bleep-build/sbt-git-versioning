@@ -102,8 +102,8 @@ class GitDriverImpl(dir: File) extends GitDriver {
     // http://stackoverflow.com/a/16925062
     val exitCode: Int = Process(s"""git rev-parse --is-inside-work-tree""", dir) ! outputLogger
     exitCode match {
-      case 0   => outputLogger.stdout.mkString("").trim.toLowerCase == "true"
-      case 128 => false // https://stackoverflow.com/a/19441790
+      case 0          => outputLogger.stdout.mkString("").trim.toLowerCase == "true"
+      case 128        => false // https://stackoverflow.com/a/19441790
       case unexpected =>
         throw new GitException(
           s"""Unexpected git exit status: $unexpected
